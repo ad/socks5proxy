@@ -25,15 +25,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	creadentials := socks5.StaticCredentials{
-		cfg.ProxyUser: cfg.ProxyPassword,
+	config := &socks5.Config{
+		Logger: log.New(os.Stdout, "", log.LstdFlags),
 	}
 
-	authenticator := socks5.UserPassAuthenticator{Credentials: creadentials}
+	if cfg.ProxyUser != "" {
+		creadentials := socks5.StaticCredentials{
+			cfg.ProxyUser: cfg.ProxyPassword,
+		}
 
-	config := &socks5.Config{
-		AuthMethods: []socks5.Authenticator{authenticator},
-		Logger:      log.New(os.Stdout, "", log.LstdFlags),
+		authenticator := socks5.UserPassAuthenticator{Credentials: creadentials}
+
+		config = &socks5.Config{
+			AuthMethods: []socks5.Authenticator{authenticator},
+			Logger:      log.New(os.Stdout, "", log.LstdFlags),
+		}
 	}
 
 	server, err := socks5.New(config)
