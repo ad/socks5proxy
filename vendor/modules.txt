@@ -1,9 +1,45 @@
 # github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
 ## explicit
 github.com/armon/go-socks5
+# github.com/getlantern/appdir v0.0.0-20180320102544-7c0f9d241ea7
+github.com/getlantern/appdir
+# github.com/getlantern/context v0.0.0-20190109183933-c447772a6520
+github.com/getlantern/context
+# github.com/getlantern/errors v0.0.0-20190325191628-abdb3e3e36f7
+github.com/getlantern/errors
+# github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7
+github.com/getlantern/golog
+# github.com/getlantern/hex v0.0.0-20190417191902-c6586a6fe0b7
+github.com/getlantern/hex
+# github.com/getlantern/hidden v0.0.0-20190325191715-f02dbb02be55
+github.com/getlantern/hidden
+# github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f
+github.com/getlantern/ops
+# github.com/getlantern/systray v0.0.0-20200316125333-beec733178c8
+## explicit
+github.com/getlantern/systray
+# github.com/getlantern/uuid v1.2.0
+github.com/getlantern/uuid
+# github.com/go-stack/stack v1.8.0
+github.com/go-stack/stack
+# github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
+## explicit
+github.com/kardianos/osext
+# github.com/lxn/walk v0.0.0-20191113135339-bf589de20b3c
+github.com/lxn/walk
+# github.com/lxn/win v0.0.0-20191106123917-121afc750dd3
+github.com/lxn/win
+# github.com/mitchellh/go-homedir v1.1.0
+github.com/mitchellh/go-homedir
+# github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
+github.com/oxtoacart/bpool
 # github.com/peterbourgon/ff/v2 v2.0.0
 ## explicit
 github.com/peterbourgon/ff/v2
 # golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 ## explicit
 golang.org/x/net/context
+# golang.org/x/sys v0.0.0-20190919044723-0c1ff786ef13
+golang.org/x/sys/windows
+# gopkg.in/Knetic/govaluate.v3 v3.0.0
+gopkg.in/Knetic/govaluate.v3

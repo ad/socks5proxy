@@ -13,6 +13,8 @@ type Config struct {
 	ProxyUser     string
 	ProxyPassword string
 	ProxyPort     int
+
+	HideSystrayIcon bool
 }
 
 var cfg = Config{}
@@ -54,6 +56,7 @@ func readConfig(cfg *Config) error {
 	fs.StringVar(&cfg.ProxyUser, "proxy_user", "", "Socks5 proxy username")
 	fs.StringVar(&cfg.ProxyPassword, "proxy_password", "", "Socks5 proxy password")
 	fs.IntVar(&cfg.ProxyPort, "proxy_port", 1080, "Socks5 proxy port")
+	fs.BoolVar(&cfg.HideSystrayIcon, "hide_systray_icon", false, "show or hide systray icon")
 
 	err := ff.Parse(fs, os.Args[1:],
 		ff.WithConfigFileFlag("config"),
