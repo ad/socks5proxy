@@ -17,8 +17,6 @@ type Config struct {
 	HideSystrayIcon bool
 }
 
-var cfg = Config{}
-
 // StringSlice is a flag.Value that collects each Set string
 // into a slice, allowing for repeated flags.
 type StringSlice []string
@@ -40,6 +38,9 @@ func (ss *StringSlice) String() string {
 
 // GetConfig Gets the conf in the config file
 func GetConfig() (*Config, error) {
+
+	var cfg = Config{}
+
 	if err := readConfig(&cfg); err == nil {
 		return &cfg, err
 	}

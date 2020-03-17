@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +13,14 @@ import (
 	"github.com/kardianos/osext"
 )
 
-var version = `0.0.1`
+var (
+	version = `0.0.1`
+	ctx     context.Context
+	cancel  context.CancelFunc
+
+	cfg *config.Config
+	err error
+)
 
 var banner = `
                  __              
@@ -22,16 +30,19 @@ _\ /_//_ /\ _\ ._/  /_// /_/></_/
 `
 
 func main() {
+	ctx, cancel = context.WithCancel(context.Background())
+
 	log.Println(banner)
 
+	defer func() {
+		cancel()
+		systray.Quit()
+	}()
+
 	// Init config
-	cfg, err := config.GetConfig()
+	cfg, err = config.GetConfig()
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	if !cfg.HideSystrayIcon {
-		systray.Run(onReady, onExit)
 	}
 
 	socks5config := &socks5.Config{
@@ -57,31 +68,54 @@ func main() {
 	}
 
 	log.Println("Started")
+	log.Printf("Running on port %d", cfg.ProxyPort)
+	if cfg.ProxyUser != "" {
+		log.Printf("User: %s, Password: %s", cfg.ProxyUser, cfg.ProxyPassword)
+	}
 
-	if err := server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort)); err != nil {
-		panic(err)
+	if !cfg.HideSystrayIcon {
+		go func() {
+			if err = server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort)); err != nil {
+				panic(err)
+			}
+		}()
+
+		systray.Run(onReady, onExit)
+	} else {
+		if err = server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort)); err != nil {
+			panic(err)
+		}
 	}
 }
 
 func onReady() {
 	systray.SetTitle("🧦")
 	systray.SetTooltip("Socks5 Proxy")
-	mTitle := systray.AddMenuItem("Socks5Proxy", "App title")
+	mTitle := systray.AddMenuItem(fmt.Sprintf("Socks5Proxy v%s", version), "App title")
 	mTitle.Disable()
-	mVersion := systray.AddMenuItem(fmt.Sprintf("Version %s", version), "App version")
-	mVersion.Disable()
+	mPort := systray.AddMenuItem(fmt.Sprintf("Running on port %d", cfg.ProxyPort), "Proxy port")
+	mPort.Disable()
+	if cfg.ProxyUser != "" {
+		mCreds := systray.AddMenuItem(fmt.Sprintf("User: %s, Password: %s", cfg.ProxyUser, cfg.ProxyPassword), "Proxy credentials")
+		mCreds.Disable()
+	}
 	mRestart := systray.AddMenuItem("Restart", "Restart app")
 	mQuit := systray.AddMenuItem("Quit", "Quit app")
-	go func() {
-		<-mRestart.ClickedCh
-		fmt.Println("Requesting restart")
-		Restart()
-	}()
-	go func() {
-		<-mQuit.ClickedCh
-		fmt.Println("Requesting quit")
-		systray.Quit()
-	}()
+
+	for {
+		select {
+		case <-mRestart.ClickedCh:
+			fmt.Println("Requesting restart")
+			cancel()
+			Restart()
+			return
+		case <-mQuit.ClickedCh:
+			fmt.Println("Requesting quit")
+			cancel()
+			systray.Quit()
+			return
+		}
+	}
 }
 
 func onExit() {

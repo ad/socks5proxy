@@ -2,4 +2,5 @@
 	"proxy_user": "socks5",
 	"proxy_password": "proxy",
 	"proxy_port": 1080,
+	"hide_systray_icon": false
 }
