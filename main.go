@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"syscall"
 
@@ -14,12 +15,15 @@ import (
 )
 
 var (
-	version = `0.0.1`
+	version = `0.0.2`
 	ctx     context.Context
 	cancel  context.CancelFunc
 
 	cfg *config.Config
 	err error
+
+	listener net.Listener
+	server   *socks5.Server
 )
 
 var banner = `
@@ -62,28 +66,34 @@ func main() {
 		}
 	}
 
-	server, err := socks5.New(socks5config)
+	server, err = socks5.New(socks5config)
 	if err != nil {
 		panic(err)
 	}
 
 	log.Println("Started")
-	log.Printf("Running on port %d", cfg.ProxyPort)
+
+	listener, err = net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort))
+	if err != nil {
+		panic(err)
+	}
+
+	log.Printf("Running on port %d\n", cfg.ProxyPort)
 	if cfg.ProxyUser != "" {
-		log.Printf("User: %s, Password: %s", cfg.ProxyUser, cfg.ProxyPassword)
+		log.Printf("User: %s, Password: %s\n", cfg.ProxyUser, cfg.ProxyPassword)
 	}
 
 	if !cfg.HideSystrayIcon {
 		go func() {
-			if err = server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort)); err != nil {
-				panic(err)
+			if err = server.Serve(listener); err != nil {
+				log.Println(err)
 			}
 		}()
 
 		systray.Run(onReady, onExit)
 	} else {
-		if err = server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort)); err != nil {
-			panic(err)
+		if err = server.Serve(listener); err != nil {
+			log.Println(err)
 		}
 	}
 }
@@ -99,6 +109,49 @@ func onReady() {
 		mCreds := systray.AddMenuItem(fmt.Sprintf("User: %s, Password: %s", cfg.ProxyUser, cfg.ProxyPassword), "Proxy credentials")
 		mCreds.Disable()
 	}
+	started := true
+	mStop := systray.AddMenuItem("Stop", "Stop proxy")
+	mStart := systray.AddMenuItem("Start", "Start proxy")
+	mStart.Hide()
+
+	toggle := func() {
+		if started {
+			mStart.Hide()
+			mStop.Hide()
+			mPort.Hide()
+
+			err = listener.Close()
+			if err != nil {
+				panic(err)
+			}
+
+			mStart.Show()
+		} else {
+			mStop.Hide()
+			mStart.Hide()
+
+			listener, err = net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", cfg.ProxyPort))
+			if err != nil {
+				log.Println(err)
+			}
+
+			log.Printf("Running on port %d\n", cfg.ProxyPort)
+			if cfg.ProxyUser != "" {
+				log.Printf("User: %s, Password: %s\n", cfg.ProxyUser, cfg.ProxyPassword)
+			}
+
+			go func() {
+				if err = server.Serve(listener); err != nil {
+					log.Println(err)
+				}
+			}()
+
+			mStop.Show()
+			mPort.Show()
+		}
+		started = !started
+	}
+
 	mRestart := systray.AddMenuItem("Restart", "Restart app")
 	mQuit := systray.AddMenuItem("Quit", "Quit app")
 
@@ -114,6 +167,10 @@ func onReady() {
 			cancel()
 			systray.Quit()
 			return
+		case <-mStart.ClickedCh:
+			toggle()
+		case <-mStop.ClickedCh:
+			toggle()
 		}
 	}
 }
