@@ -1,1 +1,1 @@
-# socks5proxy
+# socks5proxy — very simple socks5 proxy
