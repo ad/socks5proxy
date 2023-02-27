@@ -26,8 +26,9 @@ github.com/oxtoacart/bpool
 # github.com/peterbourgon/ff/v2 v2.0.1
 ## explicit
 github.com/peterbourgon/ff/v2
-# golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+# golang.org/x/net v0.7.0
 ## explicit
 golang.org/x/net/context
-# golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9
+# golang.org/x/sys v0.5.0
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/windows
