@@ -33,7 +33,7 @@ github.com/lxn/win
 github.com/mitchellh/go-homedir
 # github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
 github.com/oxtoacart/bpool
-# github.com/peterbourgon/ff/v2 v2.0.0
+# github.com/peterbourgon/ff/v2 v2.0.1
 ## explicit
 github.com/peterbourgon/ff/v2
 # golang.org/x/net v0.0.0-20200301022130-244492dfa37a
