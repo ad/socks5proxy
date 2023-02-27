@@ -1,9 +1,8 @@
 example/example
-example/main
-example/main.exe
+webview_example/webview_example
 *~
 *.swp
-*.exe
+**/*.exe
 Release
 Debug
 *.sdf
