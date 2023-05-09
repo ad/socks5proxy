@@ -13,7 +13,7 @@ github.com/getlantern/hex
 github.com/getlantern/hidden
 # github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f
 github.com/getlantern/ops
-# github.com/getlantern/systray v1.2.1
+# github.com/getlantern/systray v1.2.2
 ## explicit
 github.com/getlantern/systray
 # github.com/go-stack/stack v1.8.0
