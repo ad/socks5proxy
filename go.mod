@@ -7,5 +7,5 @@ require (
 	github.com/getlantern/systray v1.2.2
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/peterbourgon/ff/v2 v2.0.1
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 )
